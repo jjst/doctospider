@@ -7,8 +7,7 @@ from bs4 import BeautifulSoup
 import re
 from twilio.rest import Client
 
-DOCTOLIB_SEARCH_URL = "https://www.doctolib.fr/vaccination-covid-19/rosheim?ref_visit_motive_ids[]=6970&ref_visit_motive_ids[]=7005"
-
+DOCTOLIB_SEARCH_URL = os.environ['DOCTOLIB_SEARCH_URL']
 
 # Find these values at https://twilio.com/user/account
 # To set up environmental variables, see http://twil.io/secure
@@ -22,21 +21,22 @@ except KeyError:
 
 
 def fetch_appointments():
+    print(f"Using search url {DOCTOLIB_SEARCH_URL}")
     response = requests.get(DOCTOLIB_SEARCH_URL)
     soup = BeautifulSoup(response.text)
     results = soup.select(".dl-search-result")
+    print(f"Found {len(results)} centers")
     for result in results:
         css_id = result.attrs['id']
         center_id = re.search('search-result-(\d+)', css_id).group(1)
         response = requests.get(f"https://www.doctolib.fr/search_results/{center_id}.json?speciality_id=5494")
         json = response.json()
         place_name = json['search_result']['name_with_title']
-        availabilities = json['availabilities']
-        avail_count = len(availabilities)
-        print(f"Found {avail_count} available spots for location: {place_name}")
-        if avail_count:
-            print("I found a spot at {place_name}! Sending notification.")
-            message_body = "Bonjour, il y a un RDV disponible au centre de vaccination {place_name} sur doctolib.fr"
+        availabilities = json['total']
+        print(f"Found {availabilities} available spots for location: {place_name}")
+        if availabilities or 'next_slot' in json:
+            print(f"I found a spot at '{place_name}'! Sending notification.")
+            message_body = f"Bonjour, il y a un RDV disponible au centre de vaccination: '{place_name}' sur doctolib.fr"
             twilio_client.api.account.messages.create(
                 to=twilio_target_number,
                 from_=twilio_from,
