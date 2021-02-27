@@ -13,6 +13,8 @@ jobs:
         uses: actions/checkout@v1
       - name: Build
         run: sh build.sh
+      - name: verif
+        run: less build/lambda.zip
       - name: default deploy
         uses: appleboy/lambda-action@master
         with:
