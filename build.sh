@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 mkdir -p ./build
 cp *.py ./build/
