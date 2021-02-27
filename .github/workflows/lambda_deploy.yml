@@ -1,22 +1,28 @@
-# This is a basic workflow that is manually triggered
-
-name: Lambda Deploy
-
-# Controls when the action will run. Workflow runs when manually triggered using the UI
-# or API.
+name: deploy to lambda
 on: [push]
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build-deploy:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+  deploy_zip:
+    name: deploy lambda function
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [1.13.x]
     steps:
-    - name: checkout source code
-      uses: actions/checkout@v1
-    # Runs a single command using the runners shell
-    - name: build
-      run: sh build.sh
+      - name: checkout source code
+        uses: actions/checkout@v1
+      - name: Build
+        run: sh build.sh
+      - name: default deploy
+        uses: appleboy/lambda-action@master
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: eu-west-1
+          function_name: doctospider
+          zip_file: build/lambda.zip
+          memory_size: 128
+          timeout: 10
+          handler: lambda_function.lambda_handler
+          role: arn:aws:iam::064913731312:role/service-role/doctospider-role-aytvipge
+          runtime: python3.8
