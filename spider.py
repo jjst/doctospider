@@ -9,6 +9,9 @@ from twilio.rest import Client
 
 DOCTOLIB_SEARCH_URL = os.environ['DOCTOLIB_SEARCH_URL']
 
+SPECIALITY_ID = "5912" # medecins personnels de sante
+# SPECIALITY_ID = "5494" # personnes +75 ans
+
 # Find these values at https://twilio.com/user/account
 # To set up environmental variables, see http://twil.io/secure
 try:
@@ -29,7 +32,7 @@ def fetch_appointments():
     for result in results:
         css_id = result.attrs['id']
         center_id = re.search('search-result-(\d+)', css_id).group(1)
-        response = requests.get(f"https://www.doctolib.fr/search_results/{center_id}.json?speciality_id=5494")
+        response = requests.get(f"https://www.doctolib.fr/search_results/{center_id}.json?speciality_id={SPECIALITY_ID}")
         json = response.json()
         place_name = json['search_result']['name_with_title']
         availabilities = json['total']
