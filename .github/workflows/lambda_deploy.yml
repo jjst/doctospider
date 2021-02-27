@@ -17,4 +17,4 @@ jobs:
     steps:
     # Runs a single command using the runners shell
     - name: build
-      run: build.sh
+      run: sh build.sh
