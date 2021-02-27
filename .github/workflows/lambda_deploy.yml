@@ -1,0 +1,30 @@
+name: deploy to lambda
+on: [push]
+jobs:
+
+  deploy_zip:
+    name: deploy lambda function
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [1.13.x]
+    steps:
+      - name: checkout source code
+        uses: actions/checkout@v1
+      - name: Build
+        run: sh build.sh
+      - name: verif
+        run: less build/lambda.zip
+      - name: default deploy
+        uses: appleboy/lambda-action@master
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: eu-west-1
+          function_name: doctospider
+          zip_file: build/lambda.zip
+          memory_size: 128
+          timeout: 10
+          handler: lambda_function.lambda_handler
+          role: arn:aws:iam::064913731312:role/service-role/doctospider-role-aytvipge
+          runtime: python3.8

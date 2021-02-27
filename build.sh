@@ -2,7 +2,7 @@
 
 mkdir -p ./build
 cp *.py ./build/
-pip install --target ./build -r ./requirements.txt
+pip3 install --target ./build -r ./requirements.txt
 cd build
 zip -m -r lambda.zip .
 
