@@ -14,7 +14,7 @@ jobs:
       - name: Build
         run: sh build.sh
       - name: verif
-        run: less build/lambda.zip
+        run: zipinfo -1 build/lambda.zip
       - name: default deploy
         uses: appleboy/lambda-action@master
         with:
