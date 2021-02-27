@@ -18,7 +18,7 @@ try:
     twilio_account_sid = os.environ['TWILIO_ACCOUNT_SID']
     twilio_auth_token = os.environ['TWILIO_AUTH_TOKEN']
     twilio_target_number = os.environ['TWILIO_TARGET_NUMBER']
-    twilio_client = Client(account_sid, auth_token)
+    twilio_client = Client(twilio_account_sid, twilio_auth_token)
 except KeyError:
     print("Environment variables for Twilio not found. I won't be able to send texts!")
 
