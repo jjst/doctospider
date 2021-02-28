@@ -9,8 +9,12 @@ from twilio.rest import Client
 
 DOCTOLIB_SEARCH_URL = os.environ['DOCTOLIB_SEARCH_URL']
 
-SPECIALITY_ID = "5912" # medecins personnels de sante
-# SPECIALITY_ID = "5494" # personnes +75 ans
+try:
+    SPECIALITY_ID = os.environ["DOCTOLIB_SPECIALITY_ID"] # personnes +75 ans
+except KeyError:
+    print("DOCTOLIB_SPECIALITY_ID not defined, defaulting to 'personnes de + de 75 ans'")
+    SPECIALITY_ID = "5494" # personnes + 75 ans
+    # SPECIALITY_ID = "5912" # medecins personnels de sante
 
 # Find these values at https://twilio.com/user/account
 # To set up environmental variables, see http://twil.io/secure
