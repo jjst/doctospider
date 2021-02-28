@@ -43,13 +43,15 @@ def fetch_appointments():
         availabilities = json['total']
         print(f"Found {availabilities} available spots for location: {place_name}")
         if availabilities or 'next_slot' in json:
-            print(f"I found a spot at '{place_name}'! Sending notification.")
+            print(f"I found a spot at '{place_name}'! Sending notification...")
             message_body = f"Bonjour, il y a un RDV disponible au centre de vaccination: '{place_name}' sur doctolib.fr"
             twilio_client.api.account.messages.create(
                 to=twilio_target_number,
                 from_=twilio_from,
                 body=message_body
             )
+            print("Successfully sent notification.")
+            print(json)
 
 
 
