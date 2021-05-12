@@ -10,6 +10,10 @@ from twilio.rest import Client
 DOCTOLIB_SEARCH_URL = os.environ['DOCTOLIB_SEARCH_URL']
 
 try:
+    DOCTOLIB_JSON_FETCH_URL_EXTRA_ARGS = os.environ['DOCTOLIB_JSON_FETCH_URL_EXTRA_ARGS']
+except KeyError:
+    DOCTOLIB_JSON_FETCH_URL_EXTRA_ARGS = "force_max_limit=2" # Chronodoses
+try:
     SPECIALITY_ID = os.environ["DOCTOLIB_SPECIALITY_ID"] # personnes +75 ans
 except KeyError:
     print("DOCTOLIB_SPECIALITY_ID not defined, defaulting to 'personnes de + de 75 ans'")
@@ -37,7 +41,7 @@ def fetch_appointments():
     for result in results:
         css_id = result.attrs['id']
         center_id = re.search('search-result-(\d+)', css_id).group(1)
-        response = requests.get(f"https://www.doctolib.fr/search_results/{center_id}.json?speciality_id={SPECIALITY_ID}")
+        response = requests.get(f"https://www.doctolib.fr/search_results/{center_id}.json?speciality_id={SPECIALITY_ID}&{DOCTOLIB_JSON_FETCH_URL_EXTRA_ARGS}")
         json = response.json()
         place_name = json['search_result']['name_with_title']
         availabilities = json['total']
